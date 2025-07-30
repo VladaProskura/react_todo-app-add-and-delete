@@ -119,27 +119,12 @@ export const App: React.FC = () => {
     }
   };
 
-  const clearCompletedTodos = async () => {
+  const clearCompletedTodos = () => {
     const completedIds = todos
       .filter(todo => todo.completed)
       .map(todo => todo.id);
 
-    try {
-      setLoadingTodos(current => [...current, ...completedIds]);
-
-      await Promise.all(completedIds.map(id => deleteTodo(id)));
-
-      setTodos(todos.filter(todo => !todo.completed));
-    } catch {
-      setErrorMessage(ErrorTypes.CLEAR_COMPLETED_FAILED);
-      setTimeout(clearErrorMessage, 3000);
-    } finally {
-      setLoadingTodos(current =>
-        current.filter(id => !completedIds.includes(id)),
-      );
-
-      inputRef.current?.focus();
-    }
+    completedIds.forEach(id => handleDeleteTodo(id));
   };
 
   if (!USER_ID) {
