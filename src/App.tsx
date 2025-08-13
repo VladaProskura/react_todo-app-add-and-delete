@@ -15,7 +15,6 @@ export const App: React.FC = () => {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [errorMessage, setErrorMessage] = useState<ErrorTypes | null>(null);
   const [filter, setFilter] = useState<Filter>(Filter.All);
-  const [filteredTodos, setFilteredTodos] = useState<Todo[]>([]);
   const [addTodo, setAddTodo] = useState(false);
   const [tempTodo, setTempTodo] = useState<Todo | null>(null);
   const activeTodosQuantity = todos.filter(todo => !todo.completed).length;
@@ -45,22 +44,16 @@ export const App: React.FC = () => {
       });
   }, []);
 
-  useEffect(() => {
-    let newTodos = [...todos];
-
+  const getFilteredTodos = () => {
     switch (filter) {
-      case Filter.All:
-        break;
       case Filter.Active:
-        newTodos = todos.filter(todo => !todo.completed);
-        break;
+        return todos.filter(todo => !todo.completed);
       case Filter.Completed:
-        newTodos = todos.filter(todo => todo.completed);
-        break;
+        return todos.filter(todo => todo.completed);
+      default:
+        return todos;
     }
-
-    setFilteredTodos(newTodos);
-  }, [todos, filter]);
+  };
 
   const handleTodoChange = (id: number, completed: boolean) => {
     setTodos(currentTodos =>
@@ -148,7 +141,7 @@ export const App: React.FC = () => {
         />
         {todos.length > 0 && (
           <TodoList
-            filteredTodos={filteredTodos}
+            filteredTodos={getFilteredTodos()}
             onChange={handleTodoChange}
             handleDeleteTodo={handleDeleteTodo}
             tempTodo={tempTodo}
